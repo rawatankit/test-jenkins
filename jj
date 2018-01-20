@@ -1,0 +1,78 @@
+
+
+How to generate csr key and map it with wild card certificate and apache2
+
+openssl req -new -newkey rss:2048 -nodes -keyout yourdomain.key -out yourdomain.csr
+
+
+FOR Wildcard certificate enter *.domain name
+
+Then activate your csr certificate from ssls.com or from any other and fill all details and download activation file and 
+
+then go to /etc/ssl/private/
+
+copy simplysport.key file to this location
+
+then open download activate ssl certificate and copy simplysport.crt file to /etc/ssl/certs/
+and bundle file which will have 3 certificate inside copy this file to /etc/ssl/certs/intermeidate.crt
+
+Then open vi /etc/apache2/sites-available/000-default.conf and add this
+
+ ServerName  admin.simplysportapp.online
+
+ServerAdmin webmaster@localhost
+ DocumentRoot /var/www/html/Sports/production/public/
+<Directory "/var/www/html/Sports/production/public/">
+            AllowOverride All
+        </Directory>
+
+
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
+
+IF ABOVE DOES NOT WORK TO REDIRECT NON WWW TO WWW USE BELOW
+
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^six8.com.au$ [NC]
+RewriteRule (.*) http://www.six8.com.au$1 [R=301,L]
+
+////////////////////////////////////////////////////////
+
+
+
+vi default.ssl.conf
+
+ ServerAdmin webmaster@localhost
+ ServerName  admin.simplysportapp.online
+
+DocumentRoot /var/www/html/Sports/production/public/
+<Directory "/var/www/html/Sports/production/public/">
+            AllowOverride All
+        </Directory>
+
+
+   SSLCertificateFile      /etc/ssl/certs/simplysport.crt
+   SSLCertificateChainFile      /etc/ssl/certs/intermediate.crt
+   SSLCertificateKeyFile /etc/ssl/private/simplysport.key
+
+
+////////////////////////////////////////////////////////////////
+
+cd /var/www/html/sports/production/public 
+
+and add .txt file into this folder and
+
+simplysportapp.online/1D124EC6F27636771F16CE9EE0A50CE2.txt
+
+
+we have to enable also a2enmod ssl
+a2ensite default.ssl.conf
+
+###############  Different from this topic but important ##################
+
+https://gtmetrix.com/
+
+https://developers.google.com/speed/pagespeed/insights/?url=google.com
+
+http://checkgzipcompression.com
